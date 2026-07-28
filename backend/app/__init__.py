@@ -8,6 +8,8 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
 
     db.init_app(app)
+    with app.app_context():
+        from app import models
     migrate.init_app(app, db)
     cors.init_app(app, origins=app.config["CORS_ORIGINS"])
 
