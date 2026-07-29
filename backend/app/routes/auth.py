@@ -1,13 +1,16 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, g
 from marshmallow import ValidationError
 from app.extensions import db, bcrypt
 from app.models import User, Organization
 from app.schemas.auth_schemas import SignupSchema
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
-signup_schema = SignupSchema()
 
+# --------------------
 # Signup route
+# --------------------
+
+signup_schema = SignupSchema()
 
 @auth_bp.route("/signup", methods=["POST"])
 def signup():
@@ -44,7 +47,9 @@ def signup():
 
     return jsonify(user.to_dict()), 201
 
+# --------------------
 # Login route
+# --------------------
 
 from datetime import datetime, timedelta, timezone
 from app.models import Session
@@ -86,4 +91,30 @@ def login():
         samesite="Lax",
         max_age=SESSION_LIFETIME_DAYS * 24 * 60 * 60,
     )
+    return response, 200
+
+# --------------------
+# Protected route executed before any command within the program, like jobs, candidates etc, are executed.
+# --------------------
+
+from app.services.auth_service import login_required
+
+@auth_bp.route("/me", methods=["GET"])
+@login_required
+def me():
+    return jsonify(g.current_user.to_dict()), 200
+
+# --------------------
+# Logout route
+# --------------------
+
+@auth_bp.route("/logout", methods=["POST"])
+@login_required
+def logout():
+    session_id = request.cookies.get("session_id")
+    Session.query.filter_by(id=session_id).delete()
+    db.session.commit()
+
+    response = jsonify({"message": "Logged out successfully."})
+    response.delete_cookie("session_id")
     return response, 200
