@@ -12,3 +12,5 @@ All notable changes to this project are documented here, following
 - `/api/auth/signup` — creates a new organization and admin user, with bcrypt password hashing.
 - `/api/auth/login` — verifies credentials and issues a server-side session, sent as an httpOnly cookie.
 - `login_required` decorator, `/api/auth/me`, and `/api/auth/logout` endpoints.
+- Remaining models: `Candidate`, `Application`, `AIAnalysis` (versioned), `RecruiterNote`, `JobDistribution`, `PasswordResetToken`.
+- Full Jobs CRUD — create, list (pagination/search/status filter), get, update, delete.
