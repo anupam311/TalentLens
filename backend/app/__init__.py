@@ -26,4 +26,7 @@ def create_app(config_class=Config):
     from app.routes.candidates import candidates_bp
     app.register_blueprint(candidates_bp)
 
+    from app.routes.applications import applications_bp
+    app.register_blueprint(applications_bp)
+
     return app
