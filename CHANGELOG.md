@@ -14,3 +14,4 @@ All notable changes to this project are documented here, following
 - `login_required` decorator, `/api/auth/me`, and `/api/auth/logout` endpoints.
 - Remaining models: `Candidate`, `Application`, `AIAnalysis` (versioned), `RecruiterNote`, `JobDistribution`, `PasswordResetToken`.
 - Full Jobs CRUD — create, list (pagination/search/status filter), get, update, delete.
+- Full Candidates CRUD with resume upload support (multipart file handling, org-scoped email uniqueness).
