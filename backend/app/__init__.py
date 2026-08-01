@@ -29,4 +29,7 @@ def create_app(config_class=Config):
     from app.routes.applications import applications_bp
     app.register_blueprint(applications_bp)
 
+    from app.routes.ai_analysis import ai_analysis_bp
+    app.register_blueprint(ai_analysis_bp)
+
     return app
