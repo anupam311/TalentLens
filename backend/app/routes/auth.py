@@ -118,3 +118,73 @@ def logout():
     response = jsonify({"message": "Logged out successfully."})
     response.delete_cookie("session_id")
     return response, 200
+
+# --------------------
+# ForgotPassword or ResetPassword route
+# --------------------
+
+import secrets
+import hashlib
+from datetime import datetime, timedelta, timezone
+from app.models import PasswordResetToken
+from app.schemas.auth_schemas import ForgotPasswordSchema, ResetPasswordSchema
+
+forgot_password_schema = ForgotPasswordSchema()
+reset_password_schema = ResetPasswordSchema()
+
+RESET_TOKEN_TTL_MINUTES = 20
+
+def _hash_token(raw_token):
+    return hashlib.sha256(raw_token.encode("utf-8")).hexdigest()
+
+@auth_bp.route("/forgot-password", methods=["POST"])
+def forgot_password():
+    try:
+        data = forgot_password_schema.load(request.get_json())
+    except ValidationError as err:
+        return jsonify({"errors": err.messages}), 400
+
+    user = User.query.filter_by(email=data["email"]).first()
+
+    generic_response = {"message": "If an account with that email exists, a reset link has been generated."}
+
+    if not user:
+        return jsonify(generic_response), 200
+
+    raw_token = secrets.token_urlsafe(32)
+    token_hash = _hash_token(raw_token)
+
+    reset_token = PasswordResetToken(
+        user_id=user.id,
+        token_hash=token_hash,
+        expires_at=datetime.now(timezone.utc) + timedelta(minutes=RESET_TOKEN_TTL_MINUTES),
+    )
+    db.session.add(reset_token)
+    db.session.commit()
+
+    print(f"[DEV] password reset token for {user.email}: {raw_token}")
+    generic_response["dev_reset_token"] = raw_token
+    return jsonify(generic_response), 200
+
+@auth_bp.route("/reset-password", methods=["POST"])
+def reset_password():
+    try:
+        data = reset_password_schema.load(request.get_json())
+    except ValidationError as err:
+        return jsonify({"errors": err.messages}), 400
+
+    token_hash = _hash_token(data["token"])
+    reset_token = PasswordResetToken.query.filter_by(token_hash=token_hash).first()
+
+    if not reset_token or not reset_token.is_valid():
+        return jsonify({"errors": {"_general": ["This reset link is invalid or has expired."]}}), 400
+
+    user =User.query.get(reset_token.user_id)
+    user.password_hash = bcrypt.generate_password_hash(data["new_password"]).decode("utf-8")
+
+    reset_token.used_at = datetime.now(timezone.utc)
+
+    Session.query.filter_by(user_id=user.id).delete()
+    db.session.commit()
+
+    return jsonify({"message": "Password reset successful. Please log in with your new password."}), 200

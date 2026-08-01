@@ -19,3 +19,4 @@ All notable changes to this project are documented here, following
 - `/api/applications/<id>/analyze` — AI-driven candidate/job match analysis via the Anthropic API, with structured JSON prompting and defensive response validation.
 - `/api/applications/<id>/analyses` — lists version history of AI analyses for an application.
 - PDF resume text extraction on candidate creation via `pypdf`.
+- Password reset flow — `/api/auth/forgot-password` and `/api/auth/reset-password`, using single-use hashed tokens with 20-minute expiry.
