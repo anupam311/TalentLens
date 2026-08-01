@@ -18,3 +18,4 @@ All notable changes to this project are documented here, following
 - Applications resource linking candidates to jobs with pipeline status tracking (new → screening → interview → offer → hired/rejected).
 - `/api/applications/<id>/analyze` — AI-driven candidate/job match analysis via the Anthropic API, with structured JSON prompting and defensive response validation.
 - `/api/applications/<id>/analyses` — lists version history of AI analyses for an application.
+- PDF resume text extraction on candidate creation via `pypdf`.

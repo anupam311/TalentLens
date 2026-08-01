@@ -5,6 +5,7 @@ from app.models import Candidate
 from app.schemas.candidate_schemas import CreateCandidateSchema, UpdateCandidateSchema
 from app.services.auth_service import login_required
 from app.services.upload_service import save_resume_file
+from app.services.resume_parser import extract_text_from_pdf
 
 candidates_bp = Blueprint("candidates", __name__, url_prefix="/api/candidates")
 create_candidate_schema = CreateCandidateSchema()
@@ -28,6 +29,7 @@ def create_candidate():
         return jsonify({"errors": {"email": ["A candidate with this email already exists."]}}), 409
 
     resume_file_path = None
+    resume_text = None
     resume_file = request.files.get("resume")
     if resume_file and resume_file.filename:
         try:
@@ -35,9 +37,13 @@ def create_candidate():
         except ValueError as e:
             return jsonify({"errors": {"resume": [str(e)]}}), 400
 
+        if resume_file_path.lower().endswith(".pdf"):
+            resume_text = extract_text_from_pdf(resume_file_path)
+
     candidate = Candidate(
         organization_id=g.current_user.organization_id,
         resume_file_path=resume_file_path,
+        resume_text=resume_text,
         **data,
     )
     db.session.add(candidate)
