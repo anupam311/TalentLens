@@ -24,3 +24,4 @@ All notable changes to this project are documented here, following
 - Security headers (CSP, X-Content-Type-Options) via flask-talisman.
 - Job distribution stub (`/api/jobs/<id>/publish`, `/api/jobs/<id>/distributions`) using a mock adapter pattern, ready to swap in real LinkedIn/Internshala integrations later.
 - Pytest suite covering job creation, auth enforcement, and cross-organization data isolation.
+- React + TypeScript frontend scaffolded with Vite.
