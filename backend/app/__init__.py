@@ -41,4 +41,7 @@ def create_app(config_class=Config):
     from app.routes.ai_analysis import ai_analysis_bp
     app.register_blueprint(ai_analysis_bp)
 
+    from app.routes.job_distribution import distribution_bp
+    app.register_blueprint(distribution_bp)
+
     return app
