@@ -25,3 +25,4 @@ All notable changes to this project are documented here, following
 - Job distribution stub (`/api/jobs/<id>/publish`, `/api/jobs/<id>/distributions`) using a mock adapter pattern, ready to swap in real LinkedIn/Internshala integrations later.
 - Pytest suite covering job creation, auth enforcement, and cross-organization data isolation.
 - React + TypeScript frontend scaffolded with Vite.
+- Tailwind design tokens matching DESIGN.md (colors, typography, spacing, radius).
