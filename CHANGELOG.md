@@ -20,3 +20,5 @@ All notable changes to this project are documented here, following
 - `/api/applications/<id>/analyses` — lists version history of AI analyses for an application.
 - PDF resume text extraction on candidate creation via `pypdf`.
 - Password reset flow — `/api/auth/forgot-password` and `/api/auth/reset-password`, using single-use hashed tokens with 20-minute expiry.
+- Rate limiting (5 attempts/15 min) on `/login`, `/signup`, `/forgot-password` via Flask-Limiter.
+- Security headers (CSP, X-Content-Type-Options) via flask-talisman.

@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, g
 from marshmallow import ValidationError
-from app.extensions import db, bcrypt
+from app.extensions import db, bcrypt, limiter
 from app.models import User, Organization
 from app.schemas.auth_schemas import SignupSchema
 
@@ -13,6 +13,7 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
 signup_schema = SignupSchema()
 
 @auth_bp.route("/signup", methods=["POST"])
+@limiter.limit("5 per 15 minutes")
 def signup():
     # validate the incoming data
     try:
@@ -59,7 +60,9 @@ login_schema = LoginSchema()
 SESSION_LIFETIME_DAYS = 7
 
 @auth_bp.route("/login", methods=["POST"])
+@limiter.limit("5 per 15 minutes")
 def login():
+    print("LOGIN ROUTE HIT")
     # validate input shape
     try:
         data = login_schema.load(request.get_json())
@@ -138,6 +141,7 @@ def _hash_token(raw_token):
     return hashlib.sha256(raw_token.encode("utf-8")).hexdigest()
 
 @auth_bp.route("/forgot-password", methods=["POST"])
+@limiter.limit("5 per 15 minutes")
 def forgot_password():
     try:
         data = forgot_password_schema.load(request.get_json())

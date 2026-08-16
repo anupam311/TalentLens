@@ -1,7 +1,7 @@
 # backend/app/__init__.py
 from flask import Flask
 from config import Config
-from app.extensions import db, migrate, cors, bcrypt
+from app.extensions import db, migrate, cors, bcrypt, limiter, talisman
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -13,6 +13,15 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     cors.init_app(app, origins=app.config["CORS_ORIGINS"])
     bcrypt.init_app(app)
+    limiter.init_app(app)
+    talisman.init_app(
+        app,
+        force_https=False,  # will flip to True once deployed with a real HTTPS domain
+        content_security_policy={
+            "default-src": "'self'",
+        },
+        strict_transport_security=False,  # same — enable once on real HTTPS
+    )
 
     from app.routes.health import health_bp
     app.register_blueprint(health_bp)
