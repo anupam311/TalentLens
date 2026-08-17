@@ -26,3 +26,4 @@ All notable changes to this project are documented here, following
 - Pytest suite covering job creation, auth enforcement, and cross-organization data isolation.
 - React + TypeScript frontend scaffolded with Vite.
 - Tailwind design tokens matching DESIGN.md (colors, typography, spacing, radius).
+- API client (`api/client.ts`) with credentialed fetch wrapper; shared TypeScript types mirroring backend models.

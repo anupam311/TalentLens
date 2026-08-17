@@ -11,7 +11,11 @@ def create_app(config_class=Config):
     with app.app_context():
         from app import models
     migrate.init_app(app, db)
-    cors.init_app(app, origins=app.config["CORS_ORIGINS"])
+    cors.init_app(
+        app, 
+        origins=app.config["CORS_ORIGINS"],
+        supports_credentials=True,
+    )
     bcrypt.init_app(app)
     limiter.init_app(app)
     talisman.init_app(
